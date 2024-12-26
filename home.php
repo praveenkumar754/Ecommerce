@@ -1,159 +1,128 @@
+<?php
+// Connect to the database
+$conn = new mysqli("localhost", "root", "", "ecommerce");
 
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
+
+<?php include 'navbar.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce Website</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Home - Product Display</title>
+    <style>
+        /* Styles for product listing */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .product-card img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .product-price {
+            font-size: 16px;
+            color: #007BFF;
+            margin: 5px 0;
+        }
+
+        .rating {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .buy-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .buy-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<?php include 'navbar.php'; 
-?>
+<h2>Product Listing</h2>
 
-<!-- Main Section -->
-<div class="main-container">
-    <div class="overlay"></div>
-    <div class="welcome-text">
-        <h1>Welcome to Offers Zone</h1>
-        <p>Explore the best deals and discounts just for you!</p>
-    </div>
-</div>
-
-<!-- Products Section -->
 <div class="container">
-    <div class="product-card">
-        <img src="bag1.avif" alt="Product 1">
-        <div class="product-info">
-            <div class="product-name">Product 1</div>
-            <div class="product-price">$19.99</div>
-            <div class="rating">⭐⭐⭐⭐☆</div>
-            <button class="buy-button" onclick="showOrderForm('Product 1', '$19.99')">Buy Now</button>
-        </div>
-    </div>
-    <div class="product-card">
-        <img src="shirt .jpg" alt="Product 2">
-        <div class="product-info">
-            <div class="product-name">Product 2</div>
-            <div class="product-price">$29.99</div>
-            <div class="rating">⭐⭐⭐⭐⭐</div>
-            <button class="buy-button" onclick="showOrderForm('Product 1', '$29.99')">Buy Now</button>
-        </div>
-        
-    </div>
-    <div class="product-card">
-        <img src="images/partial-view-woman-with-string-bag_197531-19700.avif" alt="Product 3">
-        <div class="product-info">
-            <div class="product-name">Product 3</div>
-            <div class="product-price">$15.99</div>
-            <div class="rating">⭐⭐⭐⭐☆</div>
-            <button class="buy-button" onclick="showOrderForm('Product 1', '$15.99')">Buy Now</button>
-        </div>
-    </div>
+    <?php
+    // Fetch products from the database (correct table name)
+    $result = $conn->query("SELECT product_id, product_name, price, rating, image_path FROM productbyadmin");
 
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '
+            <div class="product-card">
+                <img src="' . htmlspecialchars($row["image_path"]) . '" alt="Product Image">
+                <div class="product-name">' . htmlspecialchars($row["product_name"]) . '</div>
+                <div class="product-price">$' . number_format($row["price"], 2) . '</div>
+                <div class="rating">Rating: ' . htmlspecialchars($row["rating"]) . ' ⭐</div>
+                <button class="buy-button" onclick="location.href=\'product-details.php?product_id=' . $row['product_id'] . '\'">Buy Now</button>
+            </div>
+            ';
+        }
+    } else {
+        echo "<p>No products available. Please add some products.</p>";
+    }
 
-    <div class="product-card">
-        <img src="shoes1.avif" alt="Product 3">
-        <div class="product-info">
-            <div class="product-name">Product 3</div>
-            <div class="product-price">$15.99</div>
-            <div class="rating">⭐⭐⭐⭐⭐</div>
-            <button class="buy-button" onclick="showOrderForm('Product 1', '$15.99')">Buy Now</button>
-        </div>
-    </div>
-
-    <div class="product-card">
-        <img src="images/belt1.avif" alt="Product 3">
-        <div class="product-info">
-            <div class="product-name">Product 3</div>
-            <div class="product-price">$12.99</div>
-            <div class="rating">⭐⭐⭐⭐⭐</div>
-            <button class="buy-button" onclick="showOrderForm('Product 1', '$12.99')">Buy Now</button>
-        </div>
-    </div>
+    $conn->close();
+    ?>
 </div>
-
-<!-- Order Form Modal -->
-<div class="order-form" id="order-form">
-    <div class="form-container">
-        <h2>Order Form</h2>
-        <form id="order-form-details" method="POST" action="process-order.php">
-            <input type="text" id="product-name" name="product_name" placeholder="Product Name" readonly>
-            <input type="text" id="product-price" name="product_price" placeholder="Product Price" readonly>
-            <input type="text" name="customer_name" placeholder="Your Name" required>
-            <input type="text" name="phone" placeholder="Your Phone Number" required>
-            <input type="text" name="address" placeholder="Your Address" required>
-            <button type="submit">Submit Order</button>
-            <button type="button" onclick="closeOrderForm()">Cancel</button>
-        </form>
-    </div>
-</div>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-container">
-        <!-- Brand Description -->
-        <div class="footer-logo-description">
-            <h3>Your Brand</h3>
-            <p>Your Brand is your go-to place for amazing products! Discover our exclusive deals and stay connected.</p>
-        </div>
-
-        <!-- Useful Links -->
-        <div class="footer-links">
-            <h3 class="footer-title">Useful Links</h3>
-            <a href="#" class="footer-link">Home</a>
-            <a href="#" class="footer-link">Shop</a>
-            <a href="#" class="footer-link">About Us</a>
-            <a href="#" class="footer-link">Contact</a>
-        </div>
-
-        <!-- Contact Information -->
-        <div class="footer-contact">
-            <h3 class="footer-title">Contact Us</h3>
-            <p>Email: support@yourbrand.com</p>
-            <p>Phone: +1 (123) 456-7890</p>
-            <p>Address: 1234 Your Street, Your City, Your Country</p>
-        </div>
-
-        <!-- Social Media Links -->
-        <div class="footer-social">
-            <h3 class="footer-title">Follow Us</h3>
-            <a href="#" class="social-link">Facebook</a>
-            <a href="#" class="social-link">Twitter</a>
-            <a href="#" class="social-link">Instagram</a>
-            <a href="#" class="social-link">LinkedIn</a>
-        </div>
-
-        <!-- Newsletter Subscription -->
-        <div class="footer-newsletter">
-            <h3 class="footer-title">Subscribe to our Newsletter</h3>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Enter your email" class="newsletter-input" required>
-                <button type="submit" class="newsletter-button">Subscribe</button>
-            </form>
-        </div>
-    </div>
-</footer>
-
-<script>
-    function showOrderForm(productName, productPrice) {
-        document.getElementById('product-name').value = productName;
-        document.getElementById('product-price').value = productPrice;
-        document.getElementById('order-form').style.display = 'flex';
-    }
-
-    function closeOrderForm() {
-        document.getElementById('order-form').style.display = 'none';
-    }
-
-    function toggleMenu() {
-        const navbar = document.querySelector('.navbar');
-        navbar.classList.toggle('active');
-    }
-</script>
 
 </body>
 </html>

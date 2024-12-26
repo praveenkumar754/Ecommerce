@@ -37,6 +37,8 @@
         </form>
     </div>
 </div>
+<?php include 'footer.php'; 
+?>
 <style>
     /* Container styling */
 .container {

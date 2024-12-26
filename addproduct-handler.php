@@ -1,4 +1,12 @@
 <?php
+session_start(); // Start session
+
+// Check if the user is not logged in
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to the login page
+    header("Location: login.php");
+    exit;
+}
 // Database connection
 $conn = new mysqli("localhost", "root", "", "ecommerce");
 

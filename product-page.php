@@ -152,6 +152,34 @@
             font-size: 1rem;
             margin: 5px 0;
         }
+        /* Base styles for buttons */
+        .category-buttons {
+    display: flex;
+    gap: 10px; /* Spacing between buttons */
+    flex-wrap: wrap; /* Allow wrapping for responsiveness */
+    justify-content: center; /* Center-align buttons */
+}
+
+.category-buttons button {
+    padding: 12px 20px; /* Button size */
+    font-size: 16px;
+    border: 1px solid #333;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    flex: 1; /* Make all buttons take equal space */
+    max-width: 200px; /* Prevent buttons from becoming too wide */
+}
+
+.category-buttons button:hover {
+    background-color: #0056b3;
+}
+h3{
+    text-align:center;
+    font-size:25px;
+}
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -172,6 +200,18 @@
                 font-size: 0.9rem;
             }
         }
+        @media (max-width: 768px) {
+    .category-buttons {
+        flex-direction: row; /* Stack buttons vertically */
+        gap: 15px; /* Increase spacing between buttons */
+    }
+
+    .category-buttons button {
+        font-size: 14px; /* Slightly reduce font size */
+        padding: 10px 15px; /* Adjust padding for smaller screens */
+        max-width: 25%; /* Let buttons expand fully in column layout */
+    }
+}
 
     </style>
 </head>
@@ -266,7 +306,8 @@
         ?>
     </div>
 </div>
-
+<?php include 'footer.php'; 
+?>
 <script>
     // Get product details from PHP
     const product = {

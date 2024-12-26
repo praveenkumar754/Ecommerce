@@ -91,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit">Place Order</button>
         </form>
     </div>
-
+    <?php include 'footer.php'; 
+?>
 </body>
 </html>

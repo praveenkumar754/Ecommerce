@@ -89,7 +89,8 @@
             </form>
         </div>
     </div>
-
+    <?php include 'footer.php'; 
+?>
     <script>
         // Example product data
         const products = [

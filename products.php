@@ -1,237 +1,154 @@
+<?php include 'navbar.php'; ?>
+<?php
+// Connect to the database
+$conn = new mysqli("localhost", "root", "", "ecommerce");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch all distinct categories from the database
+$categoriesResult = $conn->query("SELECT DISTINCT category FROM productbysadmin");
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic E-Commerce</title>
-    <link rel="stylesheet" href="./style.css">
-   <style>
-    /* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
-}
+    <title>Products by Category</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
+        h2, h3 {
+            text-align: center;
+            color: #444;
+        }
 
-/* Product Card Styles */
-.product-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    width: 250px;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
+        .container {
+            margin: 20px auto;
+            max-width: 1200px;
+        }
 
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
+        .category-section {
+            margin-bottom: 40px;
+        }
 
-.product-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-bottom: 1px solid #ddd;
-}
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
 
-.product-info {
-    padding: 15px;
-    text-align: center;
-}
+        .product-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.product-name {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+        .product-card img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
 
-.product-price {
-    font-size: 1.1rem;
-    color: #007bff;
-    margin-bottom: 10px;
-}
+        .product-card h3 {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
+        }
 
-.rating {
-    color: #f1c40f;
-    margin-bottom: 15px;
-}
+        .product-card .price {
+            color: #007BFF;
+            font-size: 16px;
+            margin: 5px 0;
+        }
 
-.view-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-}
+        .product-card .rating {
+            color: #555;
+            margin-bottom: 10px;
+        }
 
-.view-button:hover {
-    background-color: #0056b3;
-}
+        .product-card .action-buttons a {
+            display: inline-block;
+            margin: 5px 5px 0 0;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
 
-/* Order Form Styles */
-.order-form {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
+        .product-card .action-buttons a:hover {
+            background-color: #0056b3;
+        }
 
-.form-container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.form-container h2 {
-    margin: 0 0 15px;
-    text-align: center;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-form input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-form button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-form button[type="submit"] {
-    background-color: #28a745;
-    color: white;
-}
-
-form button[type="submit"]:hover {
-    background-color: #218838;
-}
-
-form button[type="button"] {
-    background-color: #dc3545;
-    color: white;
-}
-
-form button[type="button"]:hover {
-    background-color: #c82333;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .product-card {
-        width: 90%;
-    }
-
-    .form-container {
-        width: 90%;
-    }
-}
-
-   </style>
+        .no-products {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<?php include 'navbar.php'; ?>
-<div class="container" id="product-container">
-    <!-- Product cards will be generated dynamically -->
-</div>
+    <h2>Products by Category</h2>
+    <div class="container">
+        <?php
+        if ($categoriesResult->num_rows > 0) {
+            // Loop through each category
+            while ($categoryRow = $categoriesResult->fetch_assoc()) {
+                $category = $categoryRow['category'];
 
-<div class="order-form" id="order-form">
-    <div class="form-container">
-        <h2>Order Form</h2>
-        <form id="order-form-details" method="POST" action="process-order.php">
-            <input type="text" id="product-name" name="product_name" placeholder="Product Name" readonly>
-            <input type="text" id="product-price" name="product_price" placeholder="Product Price" readonly>
-            <input type="text" name="customer_name" placeholder="Your Name" required>
-            <input type="text" name="phone" placeholder="Your Phone Number" required>
-            <input type="text" name="address" placeholder="Your Address" required>
-            <button type="submit">Submit Order</button>
-            <button type="button" onclick="closeOrderForm()">Cancel</button>
-        </form>
+                echo "<div class='category-section'>";
+                echo "<h3>" . htmlspecialchars($category) . "</h3>";
+
+                // Fetch products for the current category
+                $productsResult = $conn->query("SELECT * FROM productbysadmin WHERE category = '$category'");
+
+                if ($productsResult->num_rows > 0) {
+                    echo "<div class='product-list'>";
+                    while ($row = $productsResult->fetch_assoc()) {
+                        echo '
+                        <div class="product-card">
+                            <img src="' . htmlspecialchars($row["image_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">
+                            <h3>' . htmlspecialchars($row["product_name"]) . '</h3>
+                            <div class="price">$' . number_format($row["price"], 2) . '</div>
+                            <div class="rating">Rating: ' . htmlspecialchars($row["rating"]) . ' ⭐</div>
+                            <div class="action-buttons">
+                                
+                                <a href="addcart.php?product_id=' . $row["product_id"] . '" class="addcart-button">Add to Cart</a>
+                            </div>
+                        </div>
+                        ';
+                    }
+                    echo "</div>";
+                } else {
+                    echo "<p class='no-products'>No products available in this category.</p>";
+                }
+                echo "</div>";
+            }
+        } else {
+            echo "<p>No categories found.</p>";
+        }
+
+        // Close the database connection
+        $conn->close();
+        ?>
     </div>
-</div>
-
-<script>
-    // Example product data
-    const products = [
-        { name: "Belts", price: "Rs.500", rating: "⭐⭐⭐⭐☆", image: "images/belt1.avif" },
-        { name: "Sport shoe", price: "Rs.300", rating: "⭐⭐⭐⭐☆", image: "images/redshoes1.jpeg" },
-        { name: "Mobile: VIVO-V25", price: "Rs.21,999", rating: "⭐⭐⭐⭐☆", image: "images/mobile1.jpeg" },
-        { name: "IronBox", price: "Rs.500", rating: "⭐⭐⭐⭐☆", image: "images/ironbox.jpeg" },
-        { name: "Tablet", price: "Rs.300", rating: "⭐⭐⭐⭐☆", image: "images/tab2.jpeg" },
-        { name: "Slippers: VIVO-V25", price: "Rs.21,999", rating: "⭐⭐⭐⭐☆", image: "images/th (7).jpeg" },
-        { name: "Watch", price: "Rs.500", rating: "⭐⭐⭐⭐☆", image: "images/watch 2.avif" },
-        { name: "Bags", price: "Rs.300", rating: "⭐⭐⭐⭐☆", image: "images/th (5).jpeg" },
-        { name: "Mobile: VIVO-V25", price: "Rs.21,999", rating: "⭐⭐⭐⭐☆", image: "images/mobile1.jpeg" },
-    ];
-
-    // Function to generate product cards dynamically
-    function generateProductCards() {
-        const container = document.getElementById("product-container");
-
-        products.forEach((product, index) => {
-            const productCard = document.createElement("div");
-            productCard.classList.add("product-card");
-
-            productCard.innerHTML = `
-                <img src="${product.image}" alt="${product.name}">
-                <div class="product-info">
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">${product.price}</div>
-                    <div class="rating">${product.rating}</div>
-                    <button class="view-button" onclick="redirectToProductPage(${index})">View Products</button>
-                </div>
-            `;
-
-            container.appendChild(productCard);
-        });
-    }
-
-    // Function to redirect to product page with query parameters
-    function redirectToProductPage(index) {
-        const selectedProduct = products[index];
-        const params = new URLSearchParams({
-            name: selectedProduct.name,
-            price: selectedProduct.price,
-            image: selectedProduct.image,
-            rating: selectedProduct.rating
-        });
-        window.location.href = `product-page.php?${params.toString()}`;
-    }
-
-    // Generate the product cards on page load
-    generateProductCards();
-</script>
+</body>
+</html>

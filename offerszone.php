@@ -21,7 +21,7 @@
         .product-card img {
             height: 200px;
             width: 100%;
-            object-fit: cover;
+            /* object-fit: cover; */
         }
         .product-card .p-4 {
             padding: 16px;
@@ -89,6 +89,8 @@
             </form>
         </div>
     </div>
+    <?php include 'footer.php'; 
+?>
 
     <script>
         // Example product data
